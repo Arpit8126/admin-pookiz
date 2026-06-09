@@ -1,26 +1,632 @@
 @import "tailwindcss";
 
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* ── DESIGN.md Color Tokens ── */
+  --color-ink: #000000;
+  --color-canvas: #ffffff;
+  --color-inverse-canvas: #000000;
+  --color-inverse-ink: #ffffff;
+  --color-on-inverse-soft: rgba(255, 255, 255, 0.16);
+
+  --color-hairline: #e6e6e6;
+  --color-hairline-soft: #f1f1f1;
+  --color-surface-soft: #f7f7f5;
+
+  /* Pastel color-blocks */
+  --color-block-lime: #dceeb1;
+  --color-block-lilac: #c5b0f4;
+  --color-block-cream: #f4ecd6;
+  --color-block-pink: #efd4d4;
+  --color-block-mint: #c8e6cd;
+  --color-block-coral: #f3c9b6;
+  --color-block-navy: #1f1d3d;
+
+  /* Accents & Semantic */
+  --color-accent-magenta: #ff3d8b;
+  --color-semantic-success: #1ea64a;
+  --color-semantic-error: #e53e3e;
+  --color-semantic-warning: #d97706;
+
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --auth-grid-dot: #e6e6e6;
+  /* Spacing tokens */
+  --spacing-hair: 1px;
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  --spacing-section: 96px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+@theme {
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  /* Radius tokens */
+  --radius-xs: 2px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+  --radius-pill: 50px;
+  --radius-full: 9999px;
+
+  /* Font */
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, monospace;
+
+  /* Animations */
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-slide-up: slide-up 0.3s ease-out;
+  --animate-slide-down: slide-down 0.3s ease-out;
+  --animate-scale-in: scale-in 0.2s ease-out;
+  --animate-shimmer: shimmer 2s infinite;
+  --animate-float: float 3s ease-in-out infinite;
+  --animate-bounce-in: bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --animate-marquee: marquee 28s linear infinite;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slide-down {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+  }
+  @keyframes bounce-in {
+    0% { transform: scale(0.3); opacity: 0; }
+    50% { transform: scale(1.05); }
+    70% { transform: scale(0.9); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ========================================
+   GLOBAL STYLES
+   ======================================== */
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-weight: 330;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: var(--color-block-lime);
+    color: var(--color-ink);
+  }
+
+  /* Custom Scrollbar — hairline style */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-hairline);
+    border-radius: var(--radius-full);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+  }
+
+  /* Focus styles — black ring on white */
+  :focus-visible {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  input, textarea, select {
+    font-family: var(--font-sans);
+  }
 }
+
+/* ========================================
+   DESIGN.md COMPONENT UTILITIES
+   ======================================== */
+
+@layer utilities {
+
+  /* ── Button styles (pill-only per DESIGN.md) ── */
+  .btn-primary {
+    background-color: var(--color-ink);
+    color: var(--color-canvas);
+    border-radius: var(--radius-pill);
+    padding: 10px 24px;
+    font-weight: 480;
+    font-size: 16px;
+    line-height: 1.4;
+    letter-spacing: -0.1px;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:active { transform: scale(0.98); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-secondary {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    border-radius: var(--radius-pill);
+    padding: 9px 24px;
+    font-weight: 480;
+    font-size: 16px;
+    line-height: 1.4;
+    letter-spacing: -0.1px;
+    border: 1.5px solid var(--color-ink);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .btn-secondary:hover { background-color: var(--color-surface-soft); }
+  .btn-secondary:active { transform: scale(0.98); }
+  .btn-secondary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-magenta {
+    background-color: var(--color-accent-magenta);
+    color: var(--color-canvas);
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    font-weight: 480;
+    font-size: 16px;
+    transition: opacity 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-magenta:hover { opacity: 0.88; }
+
+  /* ── Pastel Color-Block Sections ── */
+  .color-block {
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-xxl);
+    color: var(--color-ink);
+  }
+  .color-block-lime   { background-color: var(--color-block-lime); }
+  .color-block-lilac  { background-color: var(--color-block-lilac); }
+  .color-block-cream  { background-color: var(--color-block-cream); }
+  .color-block-mint   { background-color: var(--color-block-mint); }
+  .color-block-pink   { background-color: var(--color-block-pink); }
+  .color-block-coral  { background-color: var(--color-block-coral); }
+  .color-block-navy   {
+    background-color: var(--color-block-navy);
+    color: var(--color-inverse-ink);
+  }
+
+  /* ── Editorial Card (hairline bordered, no shadow blur) ── */
+  .card-editorial {
+    background-color: var(--color-canvas);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  }
+  .card-editorial-hover {
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+    cursor: pointer;
+  }
+  .card-editorial-hover:hover {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+    transform: translateY(-1px);
+  }
+
+  /* ── Marquee strip (black ribbon) ── */
+  .marquee-strip {
+    background-color: var(--color-inverse-canvas);
+    color: var(--color-inverse-ink);
+    font-size: 14px;
+    font-weight: 330;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .marquee-inner {
+    display: flex;
+    animation: marquee 28s linear infinite;
+    white-space: nowrap;
+  }
+
+  /* ── Surface soft tile ── */
+  .tile-soft {
+    background-color: var(--color-surface-soft);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+  }
+
+  /* ── Eyebrow / Caption mono labels ── */
+  .text-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.54px;
+    text-transform: uppercase;
+    line-height: 1.3;
+  }
+  .text-caption {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.60px;
+    text-transform: uppercase;
+    line-height: 1.0;
+  }
+
+  /* ── Display sizes ── */
+  .text-display-xl {
+    font-size: clamp(48px, 7vw, 86px);
+    font-weight: 340;
+    line-height: 1.00;
+    letter-spacing: -1.72px;
+  }
+  .text-display-lg {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 340;
+    line-height: 1.10;
+    letter-spacing: -0.96px;
+  }
+
+  /* ── Form inputs (editorial style) ── */
+  .input-editorial {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    border: 1px solid var(--color-hairline);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    font-size: 16px;
+    font-weight: 320;
+    line-height: 1.45;
+    letter-spacing: -0.26px;
+    width: 100%;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    outline: none;
+  }
+  .input-editorial::placeholder {
+    color: #999;
+  }
+  .input-editorial:hover {
+    border-color: #ccc;
+  }
+  .input-editorial:focus {
+    border-color: var(--color-ink);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
+  }
+  .input-editorial.error {
+    border-color: var(--color-semantic-error);
+  }
+  .input-editorial.error:focus {
+    box-shadow: 0 0 0 2px rgba(229, 62, 62, 0.12);
+  }
+
+  /* ── Notification / badge pill ── */
+  .badge-count {
+    background-color: var(--color-ink);
+    color: var(--color-canvas);
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+    min-width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+  }
+
+  /* ── Active nav indicator ── */
+  .nav-active-bar {
+    background-color: var(--color-ink);
+    width: 3px;
+    border-radius: 0 2px 2px 0;
+  }
+
+  /* ── Chat bubble styles (editorial) ── */
+  .bubble-sent {
+    background-color: var(--color-block-navy);
+    color: var(--color-inverse-ink);
+    border-radius: 16px 16px 4px 16px;
+    border: none;
+  }
+
+  .bubble-received {
+    background-color: var(--color-surface-soft);
+    color: var(--color-ink);
+    border: 1px solid var(--color-hairline);
+    border-radius: 16px 16px 16px 4px;
+  }
+
+  /* ── Role glow labels (kept for role badges, purely semantic) ── */
+  .text-glow-red {
+    text-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+  }
+  .text-glow-orange {
+    text-shadow: 0 0 8px rgba(249, 115, 22, 0.4);
+  }
+  .text-glow-yellow {
+    text-shadow: 0 0 8px rgba(234, 179, 8, 0.4);
+  }
+
+  /* ── Hide scrollbar but keep functionality ── */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ── Reply target highlight pulse ── */
+  .highlight-glow {
+    animation: highlight-blink 1.5s ease-out;
+  }
+}
+
+@keyframes highlight-blink {
+  0% {
+    background-color: rgba(197, 176, 244, 0.25);
+    box-shadow: 0 0 0 2px var(--color-block-lilac);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* Custom Audio Player Slider */
+.audio-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  background: var(--color-hairline);
+  transition: all 0.15s ease;
+}
+
+.audio-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-ink);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.audio-slider:hover::-webkit-slider-thumb,
+.audio-slider:active::-webkit-slider-thumb {
+  transform: scale(1.3);
+}
+
+.audio-slider::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border: none;
+  border-radius: 50%;
+  background: var(--color-ink);
+  cursor: pointer;
+}
+
+/* Typing Indicator Bounce */
+@keyframes typing-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-typing-bounce {
+  animation: typing-bounce 0.8s infinite ease-in-out;
+}
+
+/* pulse animation for notification dots */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ========================================
+   DARK MODE OVERRIDES
+   ======================================== */
+html.dark {
+  --color-ink: #ffffff;
+  --color-canvas: #0a0a0a;
+  --color-inverse-canvas: #ffffff;
+  --color-inverse-ink: #0a0a0a;
+  
+  --color-hairline: #262626;
+  --color-hairline-soft: #1c1c1c;
+  --color-surface-soft: #141414;
+
+  /* Make color blocks pop nicely in dark mode */
+  --color-block-lime: #1e2912;
+  --color-block-lilac: #231842;
+  --color-block-cream: #2a2310;
+  --color-block-mint: #0f2617;
+  --color-block-pink: #2b1111;
+  --color-block-coral: #2b1b11;
+  --auth-grid-dot: rgba(255, 255, 255, 0.08);
+}
+
+html.dark body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+/* Map bg-white to canvas in dark mode */
+html.dark .bg-white {
+  background-color: var(--color-canvas) !important;
+}
+
+/* Map text-black and text-[#000000] to ink in dark mode */
+html.dark .text-black,
+html.dark .text-\[\#000000\] {
+  color: var(--color-ink) !important;
+}
+
+/* Map text-[#666] to lighter ink in dark mode */
+html.dark .text-\[\#666\],
+html.dark .text-gray-500 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Map border-[#e6e6e6] and border-[#f1f1f1] to hairline in dark mode */
+html.dark .border-\[\#e6e6e6\],
+html.dark .border-\[\#f1f1f1\],
+html.dark .border-hairline {
+  border-color: var(--color-hairline) !important;
+}
+
+/* Map bg-[#f7f7f5] to surface-soft in dark mode */
+html.dark .bg-\[\#f7f7f5\],
+html.dark .bg-surface-soft {
+  background-color: var(--color-surface-soft) !important;
+}
+
+/* Map text-[#333] to lighter ink in dark mode */
+html.dark .text-\[\#333\] {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Map bg-[#f4ecd6] (mentioned message background) in dark mode to block-cream */
+html.dark .bg-\[\#f4ecd6\] {
+  background-color: var(--color-block-cream) !important;
+}
+
+/* Map active group privacy option card backgrounds in dark mode */
+html.dark .bg-\[\#dceeb1\] {
+  background-color: var(--color-block-lime) !important;
+}
+html.dark .bg-\[\#c5b0f4\] {
+  background-color: var(--color-block-lilac) !important;
+}
+
+/* Map indicator dots (bg-black) to white ink in dark mode */
+html.dark .bg-black {
+  background-color: var(--color-ink) !important;
+}
+
+/* Map text-black/60, text-black/80, text-black/40, text-[#000000]/80 in dark mode */
+html.dark .text-black\/40 {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+html.dark .text-black\/60 {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+html.dark .text-black\/80,
+html.dark .text-\[\#000000\]\/80 {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* Hover state overrides for dark mode */
+html.dark .hover\:bg-\[\#f7f7f5\]:hover {
+  background-color: var(--color-surface-soft) !important;
+}
+html.dark .hover\:bg-\[\#f1f1f1\]:hover {
+  background-color: var(--color-hairline) !important;
+}
+html.dark .hover\:text-black:hover,
+html.dark .hover\:text-\[\#000000\]:hover {
+  color: var(--color-ink) !important;
+}
+
+html.dark .hover\:bg-red-50:hover,
+html.dark .hover\:bg-red-950\/30:hover {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+}
+html.dark .hover\:bg-amber-50:hover,
+html.dark .hover\:bg-amber-950\/30:hover {
+  background-color: rgba(245, 158, 11, 0.15) !important;
+}
+
+/* Map active tab bg-[#000000] in dark mode to white canvas (primary ink) and inverse text */
+html.dark .bg-\[\#000000\] {
+  background-color: var(--color-ink) !important;
+  color: var(--color-canvas) !important;
+}
+html.dark .bg-\[\#000000\] * {
+  color: var(--color-canvas) !important;
+}
+
+/* Map bg-red-50 and border-red-200 in dark mode */
+html.dark .bg-red-50 {
+  background-color: rgba(229, 62, 62, 0.15) !important;
+}
+html.dark .border-red-200 {
+  border-color: rgba(229, 62, 62, 0.3) !important;
+}
+
+/* Map bg-[#c8e6cd] (mint success banner) in dark mode */
+html.dark .bg-\[\#c8e6cd\] {
+  background-color: var(--color-block-mint) !important;
+}
+
+/* Focus and hover state helper overrides for inputs in dark mode */
+html.dark .focus\:border-\[\#000000\]:focus {
+  border-color: var(--color-ink) !important;
+}
+html.dark .focus\:ring-black\/10:focus {
+  --tw-ring-color: rgba(255, 255, 255, 0.1) !important;
+}
+html.dark .hover\:border-\[\#ccc\]:hover {
+  border-color: #404040 !important;
+}
+
+/* Invert date picker indicator icon in dark mode */
+html.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
