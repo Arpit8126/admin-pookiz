@@ -16,11 +16,7 @@ export default function AdminPage() {
 
   const supabase = createClient()
 
-  useEffect(() => {
-    checkUser()
-  }, [])
-
-  const checkUser = async () => {
+  async function checkUser() {
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -46,6 +42,10 @@ export default function AdminPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    checkUser()
+  }, [])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
