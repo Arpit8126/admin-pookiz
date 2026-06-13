@@ -90,9 +90,13 @@ interface Broadcast {
 }
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'reports' | 'users' | 'broadcast' | 'feedback' | 'universities' | 'test-users'>('reports')
+  const [activeTab, setActiveTab] = useState<'reports' | 'users' | 'broadcast' | 'feedback' | 'universities' | 'test-users' | 'teacher-apps'>('reports')
   const { success: showSuccess, error: showError, info: showInfo } = useToast()
   const supabase = createClient()
+
+  // ─── Tab 7: Teacher Applications States ───
+  const [teacherApps, setTeacherApps] = useState<any[]>([])
+  const [loadingTeacherApps, setLoadingTeacherApps] = useState(false)
 
   // ─── Tab 4: Feedback States ───
   const [feedbacks, setFeedbacks] = useState<any[]>([])
@@ -351,6 +355,44 @@ export default function AdminDashboard() {
     }
   }, [showError])
 
+  // Fetch Teacher Applications List
+  const fetchTeacherApps = useCallback(async () => {
+    setLoadingTeacherApps(true)
+    try {
+      const res = await fetch('/api/admin/teachers')
+      const data = await res.json()
+      if (res.ok) {
+        setTeacherApps(data.applications || [])
+      } else {
+        showError(data.error || 'Failed to load teacher applications')
+      }
+    } catch {
+      showError('Error loading teacher applications')
+    } finally {
+      setLoadingTeacherApps(false)
+    }
+  }, [showError])
+
+  // Approve or Reject Teacher Application
+  const handleTeacherAppAction = async (appId: string, action: 'approved' | 'rejected') => {
+    try {
+      const res = await fetch('/api/admin/teachers', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ application_id: appId, action }),
+      })
+      const data = await res.json()
+      if (res.ok) {
+        showSuccess(`Teacher application has been ${action === 'approved' ? 'approved' : 'rejected'}.`)
+        fetchTeacherApps()
+      } else {
+        showError(data.error || 'Failed to process application')
+      }
+    } catch {
+      showError('Error processing application')
+    }
+  }
+
   // Fetch Universities & Applications List
   const fetchUniversitiesAndApps = useCallback(async () => {
     setLoadingUniversities(true)
@@ -527,8 +569,10 @@ export default function AdminDashboard() {
       fetchFeedbacks()
     } else if (activeTab === 'universities') {
       fetchUniversitiesAndApps()
+    } else if (activeTab === 'teacher-apps') {
+      fetchTeacherApps()
     }
-  }, [activeTab, fetchReports, fetchUsers, fetchBroadcastsLog, fetchFeedbacks, fetchUniversitiesAndApps])
+  }, [activeTab, fetchReports, fetchUsers, fetchBroadcastsLog, fetchFeedbacks, fetchUniversitiesAndApps, fetchTeacherApps])
 
   // Real-time username check for test users
   useEffect(() => {
@@ -623,7 +667,7 @@ export default function AdminDashboard() {
 
         {/* Tab Selection */}
         <div className="flex bg-[#f7f7f5] p-1 rounded-[12px] border border-[#e6e6e6] self-start md:self-auto flex-wrap">
-          {(['reports', 'users', 'broadcast', 'feedback', 'universities', 'test-users'] as const).map((tab) => (
+          {(['reports', 'users', 'broadcast', 'feedback', 'universities', 'teacher-apps', 'test-users'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -645,6 +689,8 @@ export default function AdminDashboard() {
                 ? 'Feedback'
                 : tab === 'universities'
                 ? 'Universities'
+                : tab === 'teacher-apps'
+                ? 'Teacher Apps'
                 : 'Test Users'}
             </button>
           ))}
@@ -1732,6 +1778,130 @@ export default function AdminDashboard() {
               </ul>
             </Card>
           </div>
+        )}
+
+        {/* ────────────── TAB 7: TEACHER APPLICATIONS ────────────── */}
+        {activeTab === 'teacher-apps' && (
+          <Card className="border border-[#e6e6e6] bg-white flex flex-col min-h-[500px]">
+            <div className="flex items-center justify-between mb-6 px-1">
+              <div>
+                <h2 className="text-xl font-[540] text-black flex items-center gap-2">
+                  <svg className="h-5 w-5 text-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Teacher Verification Applications
+                </h2>
+                <p className="text-xs text-[#666] mt-0.5 font-[320]">
+                  Review uploaded teacher ID card credentials and approve or reject verified profiles.
+                </p>
+              </div>
+              <button
+                onClick={fetchTeacherApps}
+                disabled={loadingTeacherApps}
+                className="text-xs text-black hover:opacity-75 transition cursor-pointer disabled:opacity-50 font-[540] focus:outline-none"
+              >
+                Refresh
+              </button>
+            </div>
+
+            {loadingTeacherApps ? (
+              <div className="flex-1 flex items-center justify-center py-20">
+                <Spinner size="lg" />
+              </div>
+            ) : teacherApps.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center py-20 text-[#999] text-sm italic font-[320]">
+                No teacher verification applications submitted yet.
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-[12px] border border-[#e6e6e6]">
+                <table className="w-full text-left text-sm text-[#000000]">
+                  <thead className="bg-[#f7f7f5] text-xs font-semibold text-black uppercase tracking-wider border-b border-[#e6e6e6]">
+                    <tr>
+                      <th className="px-6 py-4">User</th>
+                      <th className="px-6 py-4">Full Name</th>
+                      <th className="px-6 py-4">University</th>
+                      <th className="px-6 py-4">ID Card Proof</th>
+                      <th className="px-6 py-4">Submitted At</th>
+                      <th className="px-6 py-4">Status</th>
+                      <th className="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[#e6e6e6]">
+                    {teacherApps.map((app) => (
+                      <tr key={app.id} className="hover:bg-[#f7f7f5] transition-colors">
+                        <td className="px-6 py-4 font-medium text-[#000000]">
+                          <div className="flex items-center gap-3">
+                            <Avatar size="sm" src={app.profile?.avatar_url} name={app.profile?.username} />
+                            <span className="font-[540]">@{app.profile?.username || 'unknown'}</span>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 text-xs font-[320]">
+                          {app.profile?.full_name || <span className="text-[#999]">Not specified</span>}
+                        </td>
+                        <td className="px-6 py-4 text-xs font-[320]">
+                          {app.profile?.university_name || <span className="text-[#999]">Not specified</span>}
+                        </td>
+                        <td className="px-6 py-4 text-xs">
+                          {app.id_card_url ? (
+                            <button
+                              type="button"
+                              onClick={() => setLightboxUrl(app.id_card_url)}
+                              className="text-black hover:opacity-75 underline cursor-pointer text-left font-[540] inline-flex items-center gap-1.5 focus:outline-none"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                              </svg>
+                              View ID Card Photo
+                            </button>
+                          ) : (
+                            <span className="text-[#999]">No ID Uploaded</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4 text-xs text-[#666] font-[320]">
+                          {app.created_at ? format(new Date(app.created_at), 'MM/dd/yyyy HH:mm') : 'N/A'}
+                        </td>
+                        <td className="px-6 py-4 text-xs">
+                          <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                            app.status === 'pending'
+                              ? 'bg-[#f4ecd6] text-amber-800 border-[#e6e6e6]'
+                              : app.status === 'approved'
+                              ? 'bg-[#c8e6cd] text-[#1ea64a] border-[#e6e6e6]'
+                              : 'bg-[#efd4d4] text-red-600 border-[#e6e6e6]'
+                          }`}>
+                            {app.status}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          {app.status === 'pending' ? (
+                            <div className="flex justify-end gap-2">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleTeacherAppAction(app.id, 'rejected')}
+                                className="text-xs border border-[#e6e6e6] text-red-600 hover:bg-red-50"
+                              >
+                                Reject
+                              </Button>
+                              <Button
+                                variant="primary"
+                                size="sm"
+                                onClick={() => handleTeacherAppAction(app.id, 'approved')}
+                                className="text-xs"
+                              >
+                                Approve
+                              </Button>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-[#999] italic font-[320]">Resolved</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
         )}
 
       </div>

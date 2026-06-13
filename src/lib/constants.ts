@@ -58,7 +58,8 @@ export const ROLE_HIERARCHY: Record<string, number> = {
 // System groups
 export const SYSTEM_GROUPS = {
   GLA: 'GLA University Group',
-  ANONYMOUS: 'Anonymous Confession Room',
+  ANONYMOUS: 'Anonymous Group',
+  WELCOME: 'Welcome Group',
 } as const
 
 // Privacy type labels
