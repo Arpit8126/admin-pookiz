@@ -630,3 +630,71 @@ html.dark input[type="date"]::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
 
+/* Typing boxes border visibility enhancements in light and dark themes */
+input[type="text"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="email"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="password"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="number"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="tel"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="url"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="search"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="date"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="time"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="datetime-local"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input:not([type]):not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+textarea:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400) {
+  border-color: #3f3f46 !important;
+}
+
+html.dark input[type="text"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="email"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="password"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="number"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="tel"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="url"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="search"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="date"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="time"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="datetime-local"]:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input:not([type]):not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark textarea:not(:focus):not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400) {
+  border-color: #71717a !important;
+}
+
+/* Focused state highlight styles */
+input[type="text"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="email"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="password"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="number"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="tel"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="url"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="search"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="date"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="time"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input[type="datetime-local"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+input:not([type]):focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+textarea:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400) {
+  border-color: #000000 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12) !important;
+}
+
+html.dark input[type="text"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="email"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="password"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="number"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="tel"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="url"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="search"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="date"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="time"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input[type="datetime-local"]:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark input:not([type]):focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400),
+html.dark textarea:focus:not(.border-red-500):not(.border-green-500):not(.border-emerald-500):not(.border-yellow-400) {
+  border-color: #ffffff !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22) !important;
+}
+
+
+
